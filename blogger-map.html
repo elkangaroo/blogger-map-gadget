@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <style type="text/css">
+      html { height: 100%; }
+      body { height: 100%; margin: 0; padding: 0; }
+      #map_canvas { width: 100%; height: 100%; }
+    </style>
+    <script type="text/javascript"
+      src="http://maps.googleapis.com/maps/api/js?sensor=false">
+    </script>
+    <script type="text/javascript">
+      var map;
+      var map_layer_georss;
+      var map_info_window;
+
+      function initialize() {
+        var map_canvas = document.getElementById("map_canvas");
+        // map styles taken from https://snazzymaps.com/style/1/pale-dawn
+        var map_styles_pale_dawn = [
+            {"featureType":"administrative","elementType":"all","stylers":[{"visibility":"on"},{"lightness":33}]},
+            {"featureType":"landscape","elementType":"all","stylers":[{"color":"#f2e5d4"}]},
+            {"featureType":"poi.park","elementType":"geometry","stylers":[{"color":"#c5dac6"}]},
+            {"featureType":"poi.park","elementType":"labels","stylers":[{"visibility":"on"},{"lightness":20}]},
+            {"featureType":"road","elementType":"all","stylers":[{"lightness":20}]},
+            {"featureType":"road.highway","elementType":"geometry","stylers":[{"color":"#c5c6c6"}]},
+            {"featureType":"road.arterial","elementType":"geometry","stylers":[{"color":"#e4d7c6"}]},
+            {"featureType":"road.local","elementType":"geometry","stylers":[{"color":"#fbfaf7"}]},
+            {"featureType":"water","elementType":"all","stylers":[{"visibility":"on"},{"color":"#acbcc9"}]}
+          ];
+        var map_options = {
+            center: new google.maps.LatLng(0, 0),
+            zoom: 1,
+            zoomControl: true,
+            disableDefaultUI: true,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            styles: map_styles_pale_dawn
+          };
+
+        map = new google.maps.Map(map_canvas, map_options);
+        map_layer_georss = new google.maps.KmlLayer(map_canvas.dataset.georss, { map: map, suppressInfoWindows: true });
+        map_info_window = new google.maps.InfoWindow();
+
+        google.maps.event.addListener(map_layer_georss, 'status_changed', checkStatus);
+        google.maps.event.addListener(map_layer_georss, 'click', openInfoWindow);
+      }
+      
+      function checkStatus() {
+        var status = map_layer_georss.getStatus();
+        var url = map_layer_georss.getUrl();
+
+        if (status != 'OK') {
+          alert('Map could not be created from blogger feed!\n\nReason: ' + status + '\nURL: ' + url);
+        }
+      }
+
+      function openInfoWindow(event) {
+        map_info_window.close();
+        map_info_window.setOptions({
+            content: '<b>' + event.featureData.name + '</b><br>' + event.featureData.snippet + ' ...',
+            position: event.latLng,
+            pixelOffset: event.pixelOffset,
+            maxWidth: 180
+          });
+        map_info_window.open(map);
+      }
+    </script>
+  </head>
+  <body onload="initialize()">
+    <div id="map_canvas" data-georss="http://blogname.blogspot.com/feeds/posts/default"></div>
+  </body>
+</html>
