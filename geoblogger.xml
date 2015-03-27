@@ -1,10 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <Module>
-  <ModulePrefs title="geoblogger" height="250" scaling="true" />
-  <!-- Blogger Feed URL: http://blogname.blogspot.com/feeds/posts/default -->
+  <ModulePrefs title="GEOBlogger"
+    description="A simple Google Maps gadget for blogger.com (blogspot.com)"
+    author="Alexander Wenzel"
+    height="250"
+    scaling="true" />
   <UserPref name="georss" display_name="Blog's GeoRSS feed URL" required="true" />
   <Content type="html">
     <![CDATA[
+      <style type="text/css">
+        #geoblogger_map_canvas { width: 100%; height: 100%; }
+      </style>
       <script type="text/javascript"
         src="http://maps.googleapis.com/maps/api/js?sensor=false">
       </script>
