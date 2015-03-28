@@ -3,9 +3,9 @@
   <ModulePrefs title="GEOBlogger"
     description="A simple Google Maps gadget for blogger.com (blogspot.com)"
     author="Alexander Wenzel"
-    height="250"
-    scaling="true" />
-  <UserPref name="georss" display_name="Blog's GeoRSS feed URL" required="true" />
+    height="250">
+    <Require feature="google.blog" />
+  </ModulePrefs>
   <Content type="html">
     <![CDATA[
       <style type="text/css">
@@ -15,11 +15,16 @@
         src="http://maps.googleapis.com/maps/api/js?sensor=false">
       </script>
       <script type="text/javascript">
+        var blog;
         var map;
         var map_layer_georss;
         var map_info_window;
   
         function initialize() {
+          blog = new google.Blog(initializeMap, window.name);
+        }
+
+        function initializeMap() {
           var map_canvas = document.getElementById("geoblogger_map_canvas");
           // map styles taken from https://snazzymaps.com/style/1/pale-dawn
           var map_styles_pale_dawn = [
@@ -41,9 +46,9 @@
               mapTypeId: google.maps.MapTypeId.ROADMAP,
               styles: map_styles_pale_dawn
             };
-  
+
           map = new google.maps.Map(map_canvas, map_options);
-          map_layer_georss = new google.maps.KmlLayer(map_canvas.dataset.georss, { map: map, suppressInfoWindows: true });
+          map_layer_georss = new google.maps.KmlLayer(blog.getPostsFeedUrl(), { map: map, suppressInfoWindows: true });
           map_info_window = new google.maps.InfoWindow();
   
           google.maps.event.addListener(map_layer_georss, 'status_changed', checkStatus);
@@ -73,7 +78,7 @@
         gadgets.util.registerOnLoadHandler(initialize);
       </script>
 
-      <div id="geoblogger_map_canvas" data-georss="__UP_georss__"></div>
+      <div id="geoblogger_map_canvas"></div>
     ]]>
   </Content>
 </Module>
